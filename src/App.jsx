@@ -1,9 +1,11 @@
 import * as React from "react"
+import {useState} from "react"
 // IMPORT ANY NEEDED COMPONENTS HERE
 import { createDataSet } from "./data/dataset"
 import "./App.css"
-import Header from "./components/Header/Header.jsx"
-import Instructions from "./components/Instructions/Instructions.jsx"
+import Header from "./components/Header/Header"
+import Instructions from "./components/Instructions/Instructions"
+import Chip from "./components/Chip/Chip"
 // don't move this!
 export const appInfo = {
   title: `Fast Food Feud 🍔!`,
@@ -20,36 +22,78 @@ export const appInfo = {
 }
 // or this!
 const { data, categories, restaurants } = createDataSet()
-
+console.log(categories)
 export function App() {
+const [categoryStat, setCategory] = React.useState("")
+const [restaurantStat, setRestaurant] = React.useState("")
+const [menuStat, setMenu] = React.useState(null)
+ function handleOnClickCategory (category){
+    console.log(';dfd;')
+    setCategory(category)
+  }
+function handleOnClickRestaurant (restaurant){
+    console.log(';dfd;')
+    setRestaurant(restaurant)
+   }
+const currentMenuItems = data.filter(
+  (item)=> {
+    return item.food_category === categoryStat && item.restaurant === restaurantStat})
+console.log(currentMenuItems)
   return (
     <main className="App">
       {/* CATEGORIES COLUMN */}
       <div className="CategoriesColumn col">
         <div className="categories options">
           <h2 className="title">Categories</h2>
-          {/* YOUR CODE HERE */}
+          {/* Step 2: iterating over props */}
+          {categories.map((category, idx)=>(
+            <Chip label={category} isActive={category === categoryStat}
+            onClick = {() => handleOnClickCategory(category)}
+            />
+          ))}
+
         </div>
       </div>
 
       {/* MAIN COLUMN */}
       <div className="container">
         {/* Header */}
-        <Header header={appInfo}/>
+        <Header 
+        title={appInfo.title}
+        tagline={appInfo.tagline}
+        description={appInfo.description}/>
 
         {/* RESTAURANTS ROW */}
         <div className="RestaurantsRow">
           <h2 className="title">Restaurants</h2>
-          <div className="restaurants options">{/* YOUR CODE HERE */}</div>
+          <div className="restaurants options">
+            {/* Step 2: iterating over props */}
+            {restaurants.map((restaurant,idx) =>(
+             <Chip label={restaurant} isActive={restaurant === restaurantStat} 
+             onClick = {() => handleOnClickRestaurant(restaurant)}/>   
+            ))}
+            </div>
         </div>
         {/* Instructions  */}
-        <Instructions instructions={appInfo.instructions}/>
+        <Instructions 
+        instructions={appInfo.instructions.start}/>
 
         {/* MENU DISPLAY */}
         <div className="MenuDisplay display">
           <div className="MenuItemButtons menu-items">
             <h2 className="title">Menu Items</h2>
-            {/* YOUR CODE HERE */}
+            {currentMenuItems.map((item, itemData)=>{
+              return(
+              <Chip
+              key = {`${item.item_name}==>(${itemData})`}
+              label = {item.item_name}
+              onClick={() => setMenu(item)}
+              isActive = {setMenu && setMenu.item_name === item.item_name}
+              />
+              )
+            }
+          ) 
+        }
           </div>
 
           {/* NUTRITION FACTS */}
